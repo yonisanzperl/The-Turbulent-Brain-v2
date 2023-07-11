@@ -1,128 +1,205 @@
-function TTB_plot_empirical(output,Cfg)
+function TTB_plot_empirical_nice(output,Cfg,metadata)
 
+
+
+make_it_tight = true;
+subplot = @(m,n,p) subtightplot (m, n, p, [0.12 0.015], [0.12 0.01], [0.12 0.01]);
+if ~make_it_tight,  clear subplot;  end
 
 LAMBDA = Cfg.iLambda:Cfg.stepsLam:Cfg.fLambda;
+LAMBDA = flip(LAMBDA);
+[dd ilambda]=min(abs(LAMBDA-Cfg.PlotLambda));
 
 % Turbulence
+
+groups =metadata.group;
+stattest = metadata.stattest;
 
 NoComp = Cfg.nBrainStates*(Cfg.nBrainStates-1)*0.5;
 pval = zeros(length(LAMBDA),NoComp);
 C = cell(1,Cfg.nBrainStates);
-figure(1);
+f1=figure('Name','Turbulence across scales');
 for i=1:length(LAMBDA)
     cont=1;
     for ii=1:Cfg.nBrainStates
-        for kk=ii+1:Cfg.nBrainStates            
-            pval(i,cont) = ranksum(output(ii).Turbulence_sub(i,:),output(kk).Turbulence_sub(i,:));
-            comparison{cont}=[ii,kk];
-            cont = cont+1;
-        end
         eval(['turbu_' num2str(ii) '=output(ii).Turbulence_sub(i,:);']);
         C{1,ii}= output(ii).Turbulence_sub(i,:);
-        groups{ii} = sprintf('Cond%d',ii); 
-    end
-    subplot(4,ceil(length(LAMBDA)/4),i)
-    title('Turbulence across scales')
-    maxNumEl = max(cellfun(@numel,C));
-    Cpad = cellfun(@(x){padarray(x(:),[maxNumEl-numel(x),0],NaN,'post')}, C);
-    Cmat = cell2mat(Cpad);
-    boxplot(Cmat,'Labels',groups)
-    H=sigstar(comparison,pval(i,:));
 
-    ylabel(sprintf('lambda %.2f',LAMBDA(i)));
+    end
+    subplot(3,ceil(length(LAMBDA)/3),i)
+    fprintf('\n \n Stats for Turbu at lambda: %f \n',LAMBDA(i))    ;
+    p = swarm(C, groups, tlt=sprintf('lambda %.2f',LAMBDA(i)), overlay_style='boxplot', printPvals=true, stat_test=stattest,name=sprintf('Model-free_turbuStats_lambda %.2f.txt',LAMBDA(i)));
+    title(sprintf('lambda %.2f',LAMBDA(i)));
+    movefile(sprintf('Model-free_turbuStats_lambda %.2f.txt',LAMBDA(i)), metadata.outdir)
+
+
 end
 
-
+f1.Position = [100 100 740 600];
 % Information Transfer
 
-K=3;
+
+
+K=3; % arbitrary number to create a meaningfull transfer
 NoComp = Cfg.nBrainStates*(Cfg.nBrainStates-1)*0.5;
 pvalTr = zeros(length(LAMBDA),NoComp);
 C = cell(1,Cfg.nBrainStates);
-figure(2);
+f2=figure('Name','Transfer across scales');
 for i=1:length(LAMBDA)
     cont=1;
     for ii=1:Cfg.nBrainStates
-        for kk=ii+1:Cfg.nBrainStates            
-            pvalTr(i,cont) = ranksum(output(ii).Transfer_sub(i,:),output(kk).Transfer_sub(i,:));
-            comparison{cont}=[ii,kk];
-            cont = cont+1;
-        end
+
         eval(['transfer' num2str(ii) '=output(ii).Turbulence_sub(i,:);']);
         C{1,ii}= K-output(ii).Transfer_sub(i,:);
-        groups{ii} = sprintf('Cond%d',ii); 
     end
-    subplot(4,ceil(length(LAMBDA)/4),i)
-    title('Transfer across scales')
-    maxNumEl = max(cellfun(@numel,C));
-    Cpad = cellfun(@(x){padarray(x(:),[maxNumEl-numel(x),0],NaN,'post')}, C);
-    Cmat = cell2mat(Cpad);
-    boxplot(Cmat,'Labels',groups)
-    H=sigstar(comparison,pvalTr(i,:));
-    ylabel(sprintf('lambda %.2f',LAMBDA(i)));
+    subplot(3,ceil(length(LAMBDA)/3),i)
+    fprintf('\n \n Stats for Transfer at lambda: %f \n',LAMBDA(i))    ;
+    p = swarm(C, groups, tlt=sprintf('lambda %.2f',LAMBDA(i)), overlay_style='boxplot', printPvals=true, stat_test=stattest,name=sprintf('Model-free_transferStats_lambda %.2f.txt',LAMBDA(i)));
+    title(sprintf('lambda %.2f',LAMBDA(i)));
+        movefile(sprintf('Model-free_transferStats_lambda %.2f.txt',LAMBDA(i)), metadata.outdir)
+
 end
 
-
+f2.Position = [100 100 740 600];
 
 
 %Information Flow
 col ={'r','b','k','g'};
-figure(3);
+col_mar ={'r-o','b-o','k-o','g-o'};
+%figure('Name','Info Flow');
+
 for ii=1:Cfg.nBrainStates
-    
+    clear TL H
+
     TL = output(ii).TransferLambda_sub;
     InfoCas{1,ii}= nanmean(TL(2:length(LAMBDA),:));
-    subplot(2,ceil(Cfg.nBrainStates/2),ii)
-    shadedErrorBar(LAMBDA(2:length(LAMBDA)), TL(2:length(LAMBDA),:)',{@median,@std},'lineprops',{col{ii},'markerfacecolor',col{ii}});
-    hold on
-    ylabel('Info Flow');xlabel('Lambda Pairs')
+  %  subplot(2,ceil(Cfg.nBrainStates/2),ii)
+  %  shadedErrorBar(LAMBDA(2:length(LAMBDA)), mean(TL(2:length(LAMBDA),:),2)',std(TL(2:length(LAMBDA),:),[],2)','lineprops',{col_mar{ii},'markerfacecolor',col{ii}});
+   % plot(LAMBDA(2:length(LAMBDA)), mean(TL(2:length(LAMBDA),:),2)')
+   % ylabel('Info Flow');xlabel('Lambda Pairs')
 end
 
-% 
-figure(4)
+ 
+
+% Information Cascade
+figure('Name','Info Cascade');
+p = swarm(InfoCas, groups, tlt='', overlay_style='boxplot', printPvals=true, stat_test=stattest,name='ModelfreeInfCasStats.txt');
+movefile('ModelfreeInfCasStats.txt', metadata.outdir)
+
+
+% Turbulence by RSN
+
+
+make_it_tight = true;
+subplot = @(m,n,p) subtightplot (m, n, p, [0.1 0.1], [0.1 0.1], [0.1 0.1]);
+if ~make_it_tight,  clear subplot;  end
+
+
+NoComp = Cfg.nBrainStates*(Cfg.nBrainStates-1)*0.5;
+pval = zeros(length(LAMBDA),NoComp);
+C = cell(1,8);
+
+groupsrsn ={'Vis','Som','Att','Sal','Lim','Con','DMN','TP'}
+
+i=ilambda;
+figure('Name',sprintf('Turbulence by RSN across at lambda %.2f',LAMBDA(i))');
+
 cont=1;
-maxNumEl = max(cellfun(@numel,InfoCas));
-Cpad = cellfun(@(x){padarray(x(:),[maxNumEl-numel(x),0],NaN,'post')}, InfoCas);
-Cmat = cell2mat(Cpad); 
-pvalICas = [];
 for ii=1:Cfg.nBrainStates
-    for kk=ii+1:Cfg.nBrainStates
-        pvalICas(cont) = ranksum(InfoCas{1,ii},InfoCas{1,kk});
-        comparisonIC{cont}=[ii,kk];
-        cont = cont+1;
+    for rsn=1:8
+        eval(['turbu_rsn_' num2str(ii) '=output(ii).TurbulenceRSN_sub(i,:,:);']);
+        C{1,rsn}= squeeze(output(ii).TurbulenceRSN_sub(i,:,rsn));
+        %groupsrsn{rsn} = sprintf('RNS %d',rsn);
     end
+    
+    subplot(Cfg.nBrainStates,2,cont)
+    cont = cont+1;
+    fprintf('\n \n Stats for Turbu by RSN at lambda: %f \n',LAMBDA(i))    ;
+    [p, stat_turRSN] = swarm(C, groupsrsn, tlt=sprintf('lambda %.2f',LAMBDA(i)), overlay_style='boxplot', printPvals=true, stat_test=stattest,name='ModelfreeTurbuStatsRSN.txt',display_on_plot=false);
+    title(groups{ii});
+    subplot(Cfg.nBrainStates,2,cont)
+    cont =cont+1;
+    
+    stat_turRSN2=zeros(8,8);
+    stat_turRSN2(1:7,1:8)=stat_turRSN;
+    imagesc(stat_turRSN2'<0.05 & 0<stat_turRSN2');
+    set(gca,'fontname','times')  % Set it to times
+    set(gca, 'FontSize', 12); hold on;
+    xticks([1:1:length(groupsrsn)]);
+    xticklabels(groupsrsn);
+    yticks([1:1:length(groupsrsn)]);
+    yticklabels(groupsrsn);
+    axis square
+    title(['p_{val}<0.05 at ' groups{ii}]);
+    
+    %title(sprintf('RSN stats Condition %d',ii)');
+    caxis([0, 1])
+    myColorMap = jet(256);
+    myColorMap(1,:) = 1;
+    colormap(myColorMap);
 end
 
-boxplot(Cmat,'Labels',groups)
-H=sigstar(comparisonIC,pvalICas);
+figure('Name',sprintf('Turbulence by RSN inter condition across at lambda %.2f',LAMBDA(i))');
+
+for rsn=1:8
+    for ii=1:Cfg.nBrainStates
+        C2{1,ii}=squeeze(output(ii).TurbulenceRSN_sub(i,:,rsn));
+    end
+    for kk=1:Cfg.nBrainStates
+        for jj=kk+1:Cfg.nBrainStates
+            stat_inter(kk,jj)=ranksum(C2{1,kk},C2{1,jj});
+            
+        end
+    end
+    subplot(4,2,rsn)
+    stat_inter2 =zeros(Cfg.nBrainStates,Cfg.nBrainStates);
+    stat_inter2(1:Cfg.nBrainStates-1,1:Cfg.nBrainStates)=stat_inter;
+    imagesc(stat_inter2'<0.05 & 0<stat_inter2')
+    set(gca,'fontname','times')  % Set it to times
+    set(gca, 'FontSize', 12); hold on;
+    xticks([1:1:length(groups)]);
+    xticklabels(groups);
+    yticks([1:1:length(groups)]);
+    yticklabels(groups);
+    axis square
+    title(sprintf('p_{val}<0.05 at %s',groupsrsn{rsn}));
+    
+    %title(sprintf('RSN stats Condition %d',ii)');
+    caxis([0, 1])
+    myColorMap = jet(256);
+    myColorMap(1,:) = 1;
+    colormap(myColorMap);
+    
+end
+
+
+
+movefile('ModelfreeTurbuStatsRSN.txt', metadata.outdir)
+
+
+
 
 
 % 
 % % ---------Brain Render----------
 % 
-% 
-% 
-% turbunodecond1=squeeze(nanmean(con1.node_Turbulence_sub(9,:,:),2));
-% % including patient that are out and changed
-% turbunodecond2=squeeze(nanmean(con2.node_Turbulence_sub(9,setdiff(1:35,[6 11 35]),:),2));
-% 
-% con3.node_Turbulence_sub = [con3.node_Turbulence_sub(:,setdiff(1:20,5),:) con2.node_Turbulence_sub(:,[6 11],:)]; 
-% 
-% con34.node_Turbulence_sub = [con3.node_Turbulence_sub con4.node_Turbulence_sub];
-% 
-% turbunodecond34=squeeze(nanmean(con34.node_Turbulence_sub(9,:,:),2));
-% turbunodecond4=squeeze(nanmean(con4.node_Turbulence_sub(9,:,:),2));
-% 
-% diff1_new =abs(turbunodecond1-turbunodecond2);
-% diff2_new =abs(turbunodecond1-turbunodecond34);
-% diff3_new =abs(turbunodecond2-turbunodecond34);
-% diff4 =abs(turbunodecond2-turbunodecond3);
-% diff5 =abs(turbunodecond2-turbunodecond4);
-% diff6 =abs(turbunodecond3-turbunodecond4);
-% 
-% % rendersurface_schaefer1000(diff1,0,0.02,0,'Greens9',1)
-% % rendersurface_schaefer1000(diff2,0,0.02,0,'Greens9',1)
-% % rendersurface_schaefer1000(diff3,0,0.02,0,'Greens9',1)
-% % rendersurface_schaefer1000(diff4,0,0.02,0,'Greens9',1)
-% % rendersurface_schaefer1000(diff5,0,0.02,0,'Greens9',1)
-% % rendersurface_schaefer1000(diff6,0,0.02,0,'Greens9',1)
+
+  % lambda to plot renders
+
+for ii=1:Cfg.nBrainStates
+
+    mean_nodeTurb_sub(ii,:,:)=squeeze(mean(output(ii).node_Turbulence_sub,2));
+    std_nodeTurb_sub(ii,:,:)=squeeze(std(output(ii).node_Turbulence_sub,[],2));
+end
+tmp=squeeze(mean_nodeTurb_sub(:,ilambda,:));
+lower= min(min(tmp));
+upper = max(max(tmp));
+for ii=1:Cfg.nBrainStates
+    
+    rendersurface_schaefer1000(squeeze(mean_nodeTurb_sub(ii,ilambda,:)),lower,upper,0,'Greens9',1,['Mean Node level Turb. for' groups{ii} sprintf(' at lambda %.2f',LAMBDA(ilambda))])
+    %rendersurface_schaefer1000(squeeze(std_nodeTurb_sub(ii,ilambda,:)),min(squeeze(std_nodeTurb_sub(ii,ilambda,:))),max(squeeze(std_nodeTurb_sub(ii,ilambda,:))),0,'Greens9',1, ['Std Node level Turb.' sprintf('lambda %.2f',LAMBDA(ilambda))])
+end
+    
+end
+
+
