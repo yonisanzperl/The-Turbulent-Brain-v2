@@ -140,7 +140,7 @@ switch a0
         
                 % plot emp turbulence
         if Cfg.PlotEmpYes
-            TTB_plot_empirical_nice(output,Cfg,metadata)
+            TTB_plot_empirical(output,Cfg,metadata)
             
         end
         cd(metadata.outdir)
