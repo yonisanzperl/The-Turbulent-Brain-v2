@@ -1,4 +1,4 @@
-function TTB_plot_empirical_nice(output,Cfg,metadata)
+function TTB_plot_empirical(output,Cfg,metadata)
 
 
 
@@ -36,6 +36,10 @@ for i=1:length(LAMBDA)
 end
 
 f1.Position = [100 100 740 600];
+savefig(f1,'Turbulence_results.fig')
+movefile('Turbulence_results.fig', metadata.outdir)
+
+
 % Information Transfer
 
 
@@ -61,6 +65,9 @@ for i=1:length(LAMBDA)
 end
 
 f2.Position = [100 100 740 600];
+savefig(f2,'Transfer_results.fig')
+movefile('Transfer_results.fig', metadata.outdir)
+
 
 
 %Information Flow
@@ -82,9 +89,11 @@ end
  
 
 % Information Cascade
-figure('Name','Info Cascade');
+f3=figure('Name','Info Cascade');
 p = swarm(InfoCas, groups, tlt='', overlay_style='boxplot', printPvals=true, stat_test=stattest,name='ModelfreeInfCasStats.txt');
 movefile('ModelfreeInfCasStats.txt', metadata.outdir)
+savefig(f3,'InfoCascade_results.fig')
+movefile('InfoCascade_results.fig', metadata.outdir)
 
 
 % Turbulence by RSN
@@ -102,7 +111,7 @@ C = cell(1,8);
 groupsrsn ={'Vis','Som','Att','Sal','Lim','Con','DMN','TP'}
 
 i=ilambda;
-figure('Name',sprintf('Turbulence by RSN across at lambda %.2f',LAMBDA(i))');
+f4=figure('Name',sprintf('Turbulence by RSN across lambda %.2f',LAMBDA(i))');
 
 cont=1;
 for ii=1:Cfg.nBrainStates
@@ -139,7 +148,10 @@ for ii=1:Cfg.nBrainStates
     colormap(myColorMap);
 end
 
-figure('Name',sprintf('Turbulence by RSN inter condition across at lambda %.2f',LAMBDA(i))');
+savefig(f4,'Turbulence_by_RSN_lambda.fig')
+movefile('Turbulence_by_RSN_lambda.fig', metadata.outdir)
+
+f5=figure('Name',sprintf('Turbulence by RSN inter condition across at lambda %.2f',LAMBDA(i))');
 
 for rsn=1:8
     for ii=1:Cfg.nBrainStates
@@ -172,7 +184,8 @@ for rsn=1:8
     
 end
 
-
+savefig(f5,'Turbulence_by_RSN_state.fig')
+movefile('Turbulence_by_RSN_state.fig', metadata.outdir)
 
 movefile('ModelfreeTurbuStatsRSN.txt', metadata.outdir)
 
@@ -180,14 +193,14 @@ movefile('ModelfreeTurbuStatsRSN.txt', metadata.outdir)
 
 
 
-% 
+%
 % % ---------Brain Render----------
-% 
+%
 
-  % lambda to plot renders
+% lambda to plot renders
 
 for ii=1:Cfg.nBrainStates
-
+    
     mean_nodeTurb_sub(ii,:,:)=squeeze(mean(output(ii).node_Turbulence_sub,2));
     std_nodeTurb_sub(ii,:,:)=squeeze(std(output(ii).node_Turbulence_sub,[],2));
 end
@@ -196,10 +209,13 @@ lower= min(min(tmp));
 upper = max(max(tmp));
 for ii=1:Cfg.nBrainStates
     
-    rendersurface_schaefer1000(squeeze(mean_nodeTurb_sub(ii,ilambda,:)),lower,upper,0,'Greens9',1,['Mean Node level Turb. for' groups{ii} sprintf(' at lambda %.2f',LAMBDA(ilambda))])
+    rendersurface_schaefer1000(squeeze(mean_nodeTurb_sub(ii,ilambda,:)),lower,upper,0,'Greens9',1,['Mean Node level Turb. for ' groups{ii} sprintf(' at lambda %.2f',LAMBDA(ilambda))])
+    savefig(sprintf('Brain_render_%i.fig',ii))
+    movefile(sprintf('Brain_render_%i.fig',ii), metadata.outdir)
+    
     %rendersurface_schaefer1000(squeeze(std_nodeTurb_sub(ii,ilambda,:)),min(squeeze(std_nodeTurb_sub(ii,ilambda,:))),max(squeeze(std_nodeTurb_sub(ii,ilambda,:))),0,'Greens9',1, ['Std Node level Turb.' sprintf('lambda %.2f',LAMBDA(ilambda))])
 end
-    
+
 end
 
 

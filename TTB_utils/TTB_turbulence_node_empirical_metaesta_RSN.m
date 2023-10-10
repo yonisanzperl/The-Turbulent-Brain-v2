@@ -69,7 +69,7 @@ for sub=1:NSUB
     if Cfg.Tmax>0
         Tmax=Cfg.Tmax;                                   % Timepoints
     else
-        Tmax= size(ts{1},2);
+        Tmax= size(ts,2);
     end
     
     ts = ts(:,1:Tmax);

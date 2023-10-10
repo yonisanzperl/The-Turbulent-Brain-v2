@@ -138,18 +138,13 @@ switch a0
         clear out_Dir
         
         
-                % plot emp turbulence
+        % plot emp turbulence
         if Cfg.nBrainStates>1
-<<<<<<< HEAD
-        if Cfg.PlotEmpYes
-            TTB_plot_empirical(output,Cfg,metadata)
-=======
+            
             if Cfg.PlotEmpYes
                 TTB_plot_empirical(output,Cfg,metadata)
->>>>>>> a6e61b4e41951838721886551af09332f84e78ab
-            
+                
             end
-        end
         end
         cd(metadata.outdir)
         save('Results_modelfree.mat','output','SC','CoG','RSN','metadata','Cfg');
