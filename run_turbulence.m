@@ -139,9 +139,11 @@ switch a0
         
         
                 % plot emp turbulence
+        if Cfg.nBrainStates>1
         if Cfg.PlotEmpYes
             TTB_plot_empirical(output,Cfg,metadata)
             
+        end
         end
         cd(metadata.outdir)
         save('Results_modelfree.mat','output','SC','CoG','RSN','metadata','Cfg');
