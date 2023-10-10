@@ -4,7 +4,7 @@ clear all
 close all
 addpath(genpath([pwd '/TTB_utils']));
 
-%% ESTO ES LO ÚNICO QUE SE TOCA (sino armar una copia)
+%% ESTO ES LO ÃšNICO QUE SE TOCA (sino armar una copia)
 
 warning('off')
 
@@ -51,7 +51,7 @@ switch a0
 
          end
         
-        Cfg.TR=Answer.TRsec; %Período muestral de las tseries
+        Cfg.TR=Answer.TRsec; %PerÃ­odo muestral de las tseries
         
      
         
@@ -92,7 +92,7 @@ switch a0
          Cfg.nNodes=nNodes;
         
         
-        Cfg.randseed='shuffle'; %Tipo de semilla para los números random
+        Cfg.randseed='shuffle'; %Tipo de semilla para los nÃºmeros random
         
         
         Cfg.Tmax=Answer.Tmax; %Esto es el Tmax que va a cortar y que va a tener cada sujeto simulado (la tseries simulada va a ser Cfg.Tmax*nSubs)
@@ -140,9 +140,15 @@ switch a0
         
                 % plot emp turbulence
         if Cfg.nBrainStates>1
+<<<<<<< HEAD
         if Cfg.PlotEmpYes
             TTB_plot_empirical(output,Cfg,metadata)
+=======
+            if Cfg.PlotEmpYes
+                TTB_plot_empirical(output,Cfg,metadata)
+>>>>>>> a6e61b4e41951838721886551af09332f84e78ab
             
+            end
         end
         end
         cd(metadata.outdir)
@@ -258,7 +264,7 @@ switch a0
                     
                 end
                 
-                Cfg.TR=Answer.TRsec; %Período muestral de las tseries
+                Cfg.TR=Answer.TRsec; %PerÃ­odo muestral de las tseries
                 
                 
                 
@@ -301,7 +307,7 @@ switch a0
                 end
                 
                 
-                Cfg.randseed='shuffle'; %Tipo de semilla para los números random
+                Cfg.randseed='shuffle'; %Tipo de semilla para los nÃºmeros random
                 
                 
                 %si es 0 significa que va a tomar el maximo de cada sujeto
