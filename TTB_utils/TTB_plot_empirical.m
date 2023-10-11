@@ -87,7 +87,7 @@ movefile('Transfer_results.fig', metadata.outdir)
 if Cfg.SlopePlot
     ff2= figure('Name','Transfer:Slopes across lambda')
     plot(LAMBDA,slope,'o-','MarkerFaceColor','b', 'MarkerEdgeColor','b')
-    xlabel('Lambda');ylabel('Turbulence Slope')
+    xlabel('Lambda');ylabel('Transfer Slope')
     savefig(ff2,'Transfer_slopes.fig')
     movefile('Transfer_slopes.fig', metadata.outdir)
 end
