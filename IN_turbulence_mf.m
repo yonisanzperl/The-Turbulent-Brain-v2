@@ -229,6 +229,11 @@ DefAns.CoGDir = pwd;
 
 
 Prompt(end+1,:) = {'Empirical Plots' 'PlotEmpYes',[]};
+Formats(6,1).labelloc = 'topcenter';
+Formats(6,1).type = 'check';
+DefAns.PlotEmpYes = true;
+
+Prompt(end+1,:) = {'Empirical Slope Plots' 'SlopePlot',[]};
 Formats(6,2).labelloc = 'topcenter';
 Formats(6,2).type = 'check';
 DefAns.PlotEmpYes = true;

@@ -24,8 +24,11 @@ for i=1:length(LAMBDA)
     for ii=1:Cfg.nBrainStates
         eval(['turbu_' num2str(ii) '=output(ii).Turbulence_sub(i,:);']);
         C{1,ii}= output(ii).Turbulence_sub(i,:);
+        mean_C(ii)=mean(C{1,ii});
 
     end
+    p = polyfit([1:Cfg.nBrainStates],mean_C,1);
+    slope(i)=p(1);
     subplot(3,ceil(length(LAMBDA)/3),i)
     fprintf('\n \n Stats for Turbu at lambda: %f \n',LAMBDA(i))    ;
     p = swarm(C, groups, tlt=sprintf('lambda %.2f',LAMBDA(i)), overlay_style='boxplot', printPvals=true, stat_test=stattest,name=sprintf('Model-free_turbuStats_lambda %.2f.txt',LAMBDA(i)));
@@ -38,6 +41,14 @@ end
 f1.Position = [100 100 740 600];
 savefig(f1,'Turbulence_results.fig')
 movefile('Turbulence_results.fig', metadata.outdir)
+
+if Cfg.SlopePlot
+    ff1= figure('Name','Turbulence:Slopes across lambda')
+    plot(LAMBDA,slope,'o-','MarkerFaceColor','b', 'MarkerEdgeColor','b')
+    xlabel('Lambda');ylabel('Turbulence Slope');
+    savefig(ff1,'Turbulence_slopes.fig')
+    movefile('Turbulence_slopes.fig', metadata.outdir)
+end
 
 
 % Information Transfer
@@ -55,7 +66,11 @@ for i=1:length(LAMBDA)
 
         eval(['transfer' num2str(ii) '=output(ii).Turbulence_sub(i,:);']);
         C{1,ii}= K-output(ii).Transfer_sub(i,:);
+        mean_C(ii)=mean(C{1,ii});
+
     end
+    p = polyfit([1:Cfg.nBrainStates],mean_C,1);
+    slope(i)=p(1);
     subplot(3,ceil(length(LAMBDA)/3),i)
     fprintf('\n \n Stats for Transfer at lambda: %f \n',LAMBDA(i))    ;
     p = swarm(C, groups, tlt=sprintf('lambda %.2f',LAMBDA(i)), overlay_style='boxplot', printPvals=true, stat_test=stattest,name=sprintf('Model-free_transferStats_lambda %.2f.txt',LAMBDA(i)));
@@ -68,6 +83,14 @@ f2.Position = [100 100 740 600];
 savefig(f2,'Transfer_results.fig')
 movefile('Transfer_results.fig', metadata.outdir)
 
+
+if Cfg.SlopePlot
+    ff2= figure('Name','Transfer:Slopes across lambda')
+    plot(LAMBDA,slope,'o-','MarkerFaceColor','b', 'MarkerEdgeColor','b')
+    xlabel('Lambda');ylabel('Turbulence Slope')
+    savefig(ff2,'Transfer_slopes.fig')
+    movefile('Transfer_slopes.fig', metadata.outdir)
+end
 
 
 %Information Flow

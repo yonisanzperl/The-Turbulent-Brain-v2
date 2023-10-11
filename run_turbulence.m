@@ -108,6 +108,7 @@ switch a0
         Cfg.iLambda = Answer.iLambda;
         Cfg.fLambda = Answer.fLambda;
         Cfg.stepsLam = Answer.stepsLam;
+        Cfg.SlopePlot=Answer.SlopePlot;
         Cfg.PlotEmpYes = Answer.PlotEmpYes;
         Cfg.nBrainStates = str2num(Answer.nBS{1});
         metadata.stattest = Answer.stattest{1}; 
@@ -332,6 +333,7 @@ switch a0
                 Cfg.Gupper = Answer.GUb;
                 Cfg.Gstep = Answer.Gstep;
                 Cfg.PlotYes = Answer.PlotYes;
+                Cfg.SlopePlot=Answer.SlopePlot;
                 Cfg.PertuYes=Answer.PertuYes;
                 Cfg.NSIM=Answer.NSIM;
                 Cfg.lamICS=Answer.lamICS;
