@@ -1,7 +1,7 @@
-function [err_hete model_output]=TTB_hopf_DTI_Grange_v1(Cfg,TS,CoG,SC,corrfcn,f_diff,RSN,Clong, lambda_emp, numexcSC, valexcSC);
+function [model_output]=TTB_hopf_DTI_Grange_v2(Cfg,CoG,SC,f_diff,RSN,Clong, lambda_emp, numexcSC, valexcSC);
 
+% Parameters of the data
 
-xs=TS; 
 
 NPARCELLS=Cfg.nNodes;
 NR=Cfg.NR;
@@ -17,7 +17,7 @@ lambda=round(lambda_emp,2);
 Tmax=Cfg.Tmax;
 
 G_range=Cfg.Glower:Cfg.Gstep:Cfg.Gupper;
-empcorrfcn=corrfcn;
+
 
 rr=zeros(NPARCELLS,NPARCELLS);
 for i=1:NPARCELLS
@@ -61,8 +61,6 @@ dsig = sqrt(dt)*sig;
 corrfcn=zeros(NPARCELLS,NR);
 err_hete=zeros(NSUBSIM,size(G_range,2));
 
-% which connection are used
-
 
 IClong=find(Clong>0);
 for i=1:NPARCELLS
@@ -87,7 +85,6 @@ if strcmp(Cfg.connectivity, 'SC')
     factor=max(max(C));
     C=C/factor*0.2;
 end
-
 
 
 for nG=1:size(G_range,2)
@@ -149,14 +146,7 @@ for nG=1:size(G_range,2)
             corrfcn(i,:)=corrfcn_1./numind;
             
             
-            for i=1:NPARCELLS
-                for k=NRini:NRfin
-                    err11(k)=(corrfcn(i,k)-empcorrfcn(i,k))^2;
-                end
-                err1(i)=(nanmean(err11(NRini:NRfin)));
-            end
-        
-        err_hete(sub,nG)=sqrt(nanmean(err1));
+           
         end
     end
         

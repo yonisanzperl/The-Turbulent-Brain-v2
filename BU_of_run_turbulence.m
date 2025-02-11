@@ -83,8 +83,6 @@ switch a0
 %             SC=SC.(Answer.SCCh{1}); % Este es un truco para deshacer el anidado que se genera de hacer el load
 %   
 %          end
-
-
          if iscell(CoG)
              nNodes=length(CoG{1});
          else
@@ -121,7 +119,7 @@ switch a0
         end
                 
         
-
+        % compute long range connection from SC
        % [Clong lambda_emp numexcSC valexcSC]=TTB_SC_analysis_longrange_EDR_DTI(Cfg,CoG,SC);
         
         % compute turbulence metrics
@@ -201,8 +199,7 @@ switch a0
                     SC=SC.(Answer.SCCh{1}); % Este es un truco para deshacer el anidado que se genera de hacer el load
                     
                 end
-                Cfg.connectivity=Answer.connectivity;
-
+                
          % to compute the Hopf model end extract Turbu metrics from the modeled
                 % signals
                 
@@ -316,8 +313,7 @@ switch a0
                 end
                 
                 Cfg.nNodes=nNodes;
-                Cfg.connectivity=Answer.connectivity;
-
+                
                 
                 
                 %load de RSN belonging from file or from data from TTB
@@ -347,8 +343,7 @@ switch a0
                 Cfg.stepsLam = Answer.stepsLam;
 
                 Cfg.nBrainStates = str2num(Answer.nBS{1});
-                metadata.stattest = Answer.stattest{1}; 
-                Cfg.PlotLambda=Answer.PlotLambda;
+
                 
                 for kk=1:Cfg.nBrainStates
                     group(kk)=inputdlg(sprintf('Enter the name of Condition %d',kk));
@@ -366,7 +361,6 @@ switch a0
                 Cfg.NSIM=Answer.NSIM;
                 Cfg.lamICS=Answer.lamICS;
                 Cfg.nTrials=Answer.nTrials;
-                Cfg.PlotEmpYes=Answer.PlotEmpYes;
                 metadata.group = group;
                 
                 % to compute the Hopf model end extract Turbu metrics from the modeled
@@ -395,26 +389,12 @@ switch a0
                 
                 
                 metadata.currentFolder = pwd;
-                % compute turbulence metrics
-                for kk=1:Cfg.nBrainStates
-                    fprintf('Brain state: %d/%d\n',kk,Cfg.nBrainStates)
-                    [output(kk)]=TTB_turbulence_node_empirical_metaesta_RSN(Cfg, CoG,TS(:,kk),RSN);
-                end
+                
                 
                 
                 out_Dir=[metadata.currentFolder '/TTB_results/' metadata.saveFile '_' date]; % the direction of the bars depends on Win o Lin
                 mkdir (out_Dir);
                 metadata.outdir=out_Dir;
-                % plot emp turbulence
-                if Cfg.nBrainStates>1
-                    
-                    if Cfg.PlotEmpYes
-                        TTB_plot_empirical(output,Cfg,metadata)
-                        
-                    end
-                end
-                
-
                 
                 clear out_Dir
                 cd(metadata.currentDir);
@@ -422,12 +402,12 @@ switch a0
                 if Cfg.PertuYes
                     TTB_plot_modelIC(model_output,Cfg, IC, S, metadata)
                     cd(metadata.outdir)          
-                    save('TTBoutput_modelbased.mat','model_output','output','IC','S','metadata','Cfg','G_range','err_hete');
+                    save('TTBoutput_modelbased.mat','model_output','IC','S','metadata','Cfg','G_range','err_hete');
 
                 end
                 cd(metadata.outdir)
                 
-                save('TTBoutput_modelbased.mat','model_output','output','IC','S','metadata','Cfg','G_range','err_hete');
+                save('TTBoutput_modelbased.mat','model_output','IC','S','metadata','Cfg','G_range','err_hete');
                 
                 cd(metadata.currentDir);
    
@@ -479,8 +459,7 @@ switch a0
                 end
                 
                 Cfg.nNodes=nNodes;
-                Cfg.connectivity=Answer.connectivity;
-
+                
                 
                 
                 %load de RSN belonging from file or from data from TTB

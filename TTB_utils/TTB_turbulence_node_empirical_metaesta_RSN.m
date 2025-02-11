@@ -1,4 +1,4 @@
-function [output]=TTB_turbulence_node_empirical_metaesta_RSN(Cfg, CoG,SC,TS,RSN,Clong, lambda_emp, numexcSC, valexcSC);
+function [output]=TTB_turbulence_node_empirical_metaesta_RSN(Cfg, CoG,TS,RSN);
 
 % Parameters of the data
 xs=TS(:);                         %
@@ -40,7 +40,7 @@ end
 
 
 C1=zeros(NLAMBDA,NPARCELLS,NPARCELLS);
-[aux indsca]=min(abs(LAMBDA-lambda_emp));
+
 ilam=1;
 for lambda=LAMBDA
     for i=1:NPARCELLS
@@ -127,7 +127,7 @@ for sub=1:NSUB
 
 
     for ilam=1:NLAMBDA-1
-        [cc pp]=corr(squeeze(enstrophy(ilam+1,:,2:end))',squeeze(enstrophy(ilam,:,1:end-1))');
+        [cc pp]=corr(squeeze(enstrophy1(ilam+1,:,2:end))',squeeze(enstrophy1(ilam,:,1:end-1))');
         TransferLambda_sub(ilam+1,sub)=nanmean(abs(cc(find(pp(:)<0.05))));
     end
     

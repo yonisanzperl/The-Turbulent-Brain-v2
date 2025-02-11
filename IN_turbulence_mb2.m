@@ -146,22 +146,20 @@ Formats(3,4).span = [1 1];  % item is 1 field x 3 fields
 DefAns.SCDir = pwd;
 
 
-Prompt(end+1,:) = {'Lower Freq. bandpass', 'BPlb',[]};
+% 
+% 
+Prompt(end+1,:) = {'Which connection?','connectivity',[]};
 Formats(3,5).labelloc = 'topcenter';
-Formats(3,5).type = 'edit';
-Formats(3,5).format = 'float';
-Formats(3,5).size = 80;
-Formats(3,5).limits = [0 inf] ;% non-negative decimal number
-DefAns.BPlb = 0.04;
+Formats(3,5).type = 'list';
+Formats(3,5).style = 'list';
+Formats(3,5).format = 'text'; % Answer will give value shown in items, disable to get integer
+Formats(3,5).items = {'EDR','EDR+LR','SC'};
+Formats(3,5).limits = [1 1]; % multi-select
+Formats(3,5).size =  size_control;
+DefAns.connectivity = {'EDR+LR'};
+% 
 
 
-Prompt(end+1,:) = {'Upper Freq. bandpass', 'BPub',[]};
-Formats(3,6).labelloc = 'topcenter';
-Formats(3,6).type = 'edit';
-Formats(3,6).format = 'float';
-Formats(3,6).size = 80;
-Formats(3,6).limits = [0 inf] ;% non-negative decimal number
-DefAns.BPub = 0.07;
 
 
 Prompt(end+1,:) = {'Load RSN (mat file)','',''};
@@ -188,6 +186,28 @@ Formats(4,4).format = 'text';
 Formats(4,4).size = [-1 0];
 Formats(4,4).span = [1 1];  % item is 1 field x 3 fields
 DefAns.RSNDir = pwd;
+
+
+
+Prompt(end+1,:) = {'Lower Freq. bandpass', 'BPlb',[]};
+Formats(4,5).labelloc = 'topcenter';
+Formats(4,5).type = 'edit';
+Formats(4,5).format = 'float';
+Formats(4,5).size = 80;
+Formats(4,5).limits = [0 inf] ;% non-negative decimal number
+DefAns.BPlb = 0.008;
+
+
+Prompt(end+1,:) = {'Upper Freq. bandpass', 'BPub',[]};
+Formats(4,6).labelloc = 'topcenter';
+Formats(4,6).type = 'edit';
+Formats(4,6).format = 'float';
+Formats(4,6).size = 80;
+Formats(4,6).limits = [0 inf] ;% non-negative decimal number
+DefAns.BPub = 0.08;
+
+
+
 
 
 
@@ -225,6 +245,27 @@ Formats(5,5).limits = [0 999999999]; % 9-digits (positive #)
 Formats(5,5).size = 80;
 Formats(5,5).unitsloc = 'bottomleft';
 DefAns.Tsim = 200;
+
+Prompt(end+1,:) = {'Lambda to be plotted', 'PlotLambda',[]};
+Formats(5,6).labelloc = 'topcenter';
+Formats(5,6).type = 'edit';
+Formats(5,6).format = 'float';
+Formats(5,6).size = 80;
+Formats(5,6).limits = [0 inf] ;% non-negative decimal number
+DefAns.PlotLambda = 0.18;
+
+
+
+Prompt(end+1,:) = {'Empirical Plots' 'PlotEmpYes',[]};
+Formats(6,1).labelloc = 'topcenter';
+Formats(6,1).type = 'check';
+DefAns.PlotEmpYes = true;
+
+Prompt(end+1,:) = {'Empirical Slope Plots' 'SlopePlot',[]};
+Formats(6,2).labelloc = 'topcenter';
+Formats(6,2).type = 'check';
+DefAns.PlotEmpYes = true;
+
 
 Prompt(end+1,:) = {'How many brain states','nBS',[]};
 Formats(6,3).labelloc = 'topcenter';

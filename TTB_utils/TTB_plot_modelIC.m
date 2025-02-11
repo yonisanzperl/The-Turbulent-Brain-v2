@@ -15,7 +15,7 @@ groups=metadata.group;
 NoComp = Cfg.nBrainStates*(Cfg.nBrainStates-1)*0.5;
 pval = zeros(1,NoComp);
 C = cell(1,Cfg.nBrainStates);
-figure('Name','Turbulence across scales');
+figure('Name','Turbulence perturbative metrics');
 
 cont=1;
 for ii=1:Cfg.nBrainStates

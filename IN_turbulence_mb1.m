@@ -83,7 +83,7 @@ Formats(2,3).labelloc = 'leftmiddle';
 Formats(2,3).type = 'list';
 Formats(2,3).style = 'list';
 Formats(2,3).format = 'text'; % Answer will give value shown in items, disable to get integer
-Formats(2,3).items = {'TS_W' ; 'there is not ts'};
+Formats(2,3).items = {'there is not ts'};
 Formats(2,3).limits = [1 1]; % multi-select
 Formats(2,3).size = size_control;
 DefAns.TSCh = {'there is not ts'};
@@ -112,10 +112,10 @@ Formats(3,3).labelloc = 'leftmiddle';
 Formats(3,3).type = 'list';
 Formats(3,3).style = 'list';
 Formats(3,3).format = 'text'; % Answer will give value shown in items, disable to get integer
-Formats(3,3).items = {'SC','there is not SC'};
+Formats(3,3).items = {'load the results from model free approach'};
 Formats(3,3).limits = [1 1]; % multi-select
 Formats(3,3).size =  size_control;
-DefAns.allIt = {'there is not SC'};
+DefAns.allIt = {'load the results from model free approach'};
 
 
 Prompt(end+1,:) = {'SC Folder','MFoutdir',[]};
@@ -128,52 +128,97 @@ DefAns.MFoutdir = pwd;
 
 
 
-Prompt(end+1,:) = {'Model ts up to...', 'Tsim','(0: max)'};
+% 
+% 
+Prompt(end+1,:) = {'Which connection?','connectivity',[]};
 Formats(3,5).labelloc = 'topcenter';
-Formats(3,5).type = 'edit';
-Formats(3,5).format = 'integer';
-Formats(3,5).limits = [0 999999999]; % 9-digits (positive #)
-Formats(3,5).size = 80;
-Formats(3,5).unitsloc = 'bottomleft';
+Formats(3,5).type = 'list';
+Formats(3,5).style = 'list';
+Formats(3,5).format = 'text'; % Answer will give value shown in items, disable to get integer
+Formats(3,5).items = {'EDR','EDR+LR','SC'};
+Formats(3,5).limits = [1 1]; % multi-select
+Formats(3,5).size =  size_control;
+DefAns.connectivity = {'EDR+LR'};
+% 
+
+
+
+
+Prompt(end+1,:) = {'Model ts up to...', 'Tsim','(0: max)'};
+Formats(3,6).labelloc = 'topcenter';
+Formats(3,6).type = 'edit';
+Formats(3,6).format = 'integer';
+Formats(3,6).limits = [0 999999999]; % 9-digits (positive #)
+Formats(3,6).size = 80;
+Formats(3,6).unitsloc = 'bottomleft';
 DefAns.Tsim = 200;
 
 
 
-Prompt(end+1,:) = {'How many brain states','nBS',[]};
-Formats(4,3).labelloc = 'topcenter';
+Prompt(end+1,:) = {'Load Structural Connectivity (mat file)','',''};
+Formats(4,2).type = 'button';
+Formats(4,2).size = [150 40]; % Tamaño
+%Formats(5,1).callback = @(~,~,handles,k)msgbox(sprintf('You just pressed %s button',get(handles(k),'String')),'modal');
+Formats(4,2).callback = @(~,~,h,k)dataload(h,k);
+
+
+
+Prompt(end+1,:) = {'Choose SC','SCCh',[]};
+Formats(4,3).labelloc = 'leftmiddle';
 Formats(4,3).type = 'list';
 Formats(4,3).style = 'list';
 Formats(4,3).format = 'text'; % Answer will give value shown in items, disable to get integer
-Formats(4,3).items = {'1','2','3','4','5','6'};
+Formats(4,3).items = {'Structural Connectivity is not included'};
 Formats(4,3).limits = [1 1]; % multi-select
 Formats(4,3).size =  size_control;
+DefAns.SCCh = {'Structural Connectivity is not included'};
+
+
+Prompt(end+1,:) = {'SC Folder','SCDir',[]};
+Formats(4,4).labelloc = 'topcenter';
+Formats(4,4).type = 'edit';
+Formats(4,4).format = 'text';
+Formats(4,4).size = [-1 0];
+Formats(4,4).span = [1 1];  % item is 1 field x 3 fields
+DefAns.SCDir = pwd;
+
+
+
+Prompt(end+1,:) = {'How many brain states','nBS',[]};
+Formats(5,3).labelloc = 'topcenter';
+Formats(5,3).type = 'list';
+Formats(5,3).style = 'list';
+Formats(5,3).format = 'text'; % Answer will give value shown in items, disable to get integer
+Formats(5,3).items = {'1','2','3','4','5','6'};
+Formats(5,3).limits = [1 1]; % multi-select
+Formats(5,3).size =  size_control;
 DefAns.nBS = {'2'};
 %Formats(7,2).callback = @(~,~,h,k)disableG(h,k);
 
 Prompt(end+1,:) = {'Initial Lambda', 'iLambda',[]};
-Formats(4,4).labelloc = 'topcenter';
-Formats(4,4).type = 'edit';
-Formats(4,4).format = 'float';
-Formats(4,4).limits = [0 999999999]; % 9-digits (positive #)
-Formats(4,4).size = 80;
-Formats(4,4).unitsloc = 'bottomleft';
+Formats(5,4).labelloc = 'topcenter';
+Formats(5,4).type = 'edit';
+Formats(5,4).format = 'float';
+Formats(5,4).limits = [0 999999999]; % 9-digits (positive #)
+Formats(5,4).size = 80;
+Formats(5,4).unitsloc = 'bottomleft';
 DefAns.iLambda = 0.01;
 
 Prompt(end+1,:) = {'final Lambda', 'fLambda',[]};
-Formats(4,5).labelloc = 'topcenter';
-Formats(4,5).type = 'edit';
-Formats(4,5).format = 'float';
-Formats(4,5).size = 80;
-Formats(4,5).limits = [0 inf] ;% non-negative decimal number
+Formats(5,5).labelloc = 'topcenter';
+Formats(5,5).type = 'edit';
+Formats(5,5).format = 'float';
+Formats(5,5).size = 80;
+Formats(5,5).limits = [0 inf] ;% non-negative decimal number
 DefAns.fLambda = 0.3;
 
 
 Prompt(end+1,:) = {'Lambda steps', 'stepsLam',[]};
-Formats(4,6).labelloc = 'topcenter';
-Formats(4,6).type = 'edit';
-Formats(4,6).format = 'float';
-Formats(4,6).size = 80;
-Formats(4,6).limits = [0 inf] ;% non-negative decimal number
+Formats(5,6).labelloc = 'topcenter';
+Formats(5,6).type = 'edit';
+Formats(5,6).format = 'float';
+Formats(5,6).size = 80;
+Formats(5,6).limits = [0 inf] ;% non-negative decimal number
 DefAns.stepsLam = 0.03;
 
 
@@ -188,44 +233,44 @@ DefAns.stepsLam = 0.03;
 % 
 % 
 Prompt(end+1,:) = {'G range lower limit', 'GLb',[]};
-Formats(5,2).labelloc = 'topcenter';
-Formats(5,2).type = 'edit';
-Formats(5,2).format = 'float';
-Formats(5,2).size = 80;
-Formats(5,2).limits = [-inf inf]; % non-negative decimal number
+Formats(6,2).labelloc = 'topcenter';
+Formats(6,2).type = 'edit';
+Formats(6,2).format = 'float';
+Formats(6,2).size = 80;
+Formats(6,2).limits = [-inf inf]; % non-negative decimal number
 DefAns.GLb = 0;
 % 
 
 Prompt(end+1,:) = {'G range upper limit', 'GUb',[]};
-Formats(5,3).labelloc = 'topcenter';
-Formats(5,3).type = 'edit';
-Formats(5,3).format = 'float';
-Formats(5,3).size = 80;
-Formats(5,3).limits = [-inf inf] ;% non-negative decimal number
+Formats(6,3).labelloc = 'topcenter';
+Formats(6,3).type = 'edit';
+Formats(6,3).format = 'float';
+Formats(6,3).size = 80;
+Formats(6,3).limits = [-inf inf] ;% non-negative decimal number
 DefAns.GUb = 3;
 
 
 Prompt(end+1,:) = {'G range step', 'Gstep',[]};
-Formats(5,4).labelloc = 'topcenter';
-Formats(5,4).type = 'edit';
-Formats(5,4).format = 'float';
-Formats(5,4).size = 80;
-Formats(5,4).limits = [-inf inf] ;% non-negative decimal number
+Formats(6,4).labelloc = 'topcenter';
+Formats(6,4).type = 'edit';
+Formats(6,4).format = 'float';
+Formats(6,4).size = 80;
+Formats(6,4).limits = [-inf inf] ;% non-negative decimal number
 DefAns.Gstep = 0.25;
 
 Prompt(end+1,:) = {'NSUBSIM (if =0,= NSUB)', 'NSIM',[]};
-Formats(5,5).labelloc = 'topcenter';
-Formats(5,5).type = 'edit';
-Formats(5,5).format = 'integer';
-Formats(5,5).limits = [0 999999999]; % 9-digits (positive #)
-Formats(5,5).size = 80;
-Formats(5,5).unitsloc = 'bottomleft';
+Formats(6,5).labelloc = 'topcenter';
+Formats(6,5).type = 'edit';
+Formats(6,5).format = 'integer';
+Formats(6,5).limits = [0 999999999]; % 9-digits (positive #)
+Formats(6,5).size = 80;
+Formats(6,5).unitsloc = 'bottomleft';
 DefAns.NSIM = 5;
 % 
 
 Prompt(end+1,:) = {'Model Plots?' 'PlotYes',[]};
-Formats(5,6).labelloc = 'topcenter';
-Formats(5,6).type = 'check';
+Formats(6,6).labelloc = 'topcenter';
+Formats(6,6).type = 'check';
 DefAns.PlotYes = true;
 
 % perturbations

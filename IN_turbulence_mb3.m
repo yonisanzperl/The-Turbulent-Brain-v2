@@ -3,7 +3,7 @@
 % set(0,'ShowHiddenHandles','on')
 % delete(get(0,'Children'))
 
-function [Answer,Answer0,Cancelled]=IN_turbulence_mf(varargin)
+function [Answer,Answer0,Cancelled]=IN_turbulence_mb3(varargin)
 % % 
 % if nargin==1
 %     Answer0=varargin{1};
@@ -33,7 +33,7 @@ function [Answer,Answer0,Cancelled]=IN_turbulence_mf(varargin)
 %     
 %     clear pathStr name ext
 % end
-Title = 'The Turbulent Brain: model-free';
+Title = 'The Turbulent Brain: model-based';
 
 %%%% SETTING DIALOG OPTIONS
 % Options.WindowStyle = 'modal';
@@ -70,46 +70,6 @@ DefAns(1).saveFile = 'TTB measures ';
 
 
 
-Prompt(end+1,:) = {'Load timeseires (mat file)','',''};
-Formats(2,2).type = 'button';
-Formats(2,2).size = [150 40]; % Tamaño
-%Formats(2,1).callback = @(~,~,handles,k)msgbox(sprintf('You just pressed %s button',get(handles(k),'String')),'modal');
-Formats(2,2).callback = @(~,~,h,k)dataload(h,k);
- 
-
-Prompt(end+1,:) = {'Choose timeseries:','TSCh',[]};
-Formats(2,3).labelloc = 'leftmiddle';
-Formats(2,3).type = 'list';
-Formats(2,3).style = 'list';
-Formats(2,3).format = 'text'; % Answer will give value shown in items, disable to get integer
-Formats(2,3).items = { 'timeseries are not included'};
-Formats(2,3).limits = [1 1]; % multi-select
-Formats(2,3).size = size_control;
-DefAns.TSCh = {'timeseries are not included'};
-
-
-Prompt(end+1,:) = {'Timeseries Folder','TSDir',[]};
-Formats(2,4).labelloc = 'topcenter';
-Formats(2,4).type = 'edit';
-Formats(2,4).format = 'text';
-Formats(2,4).size = [-1 0];
-Formats(2,4).span = [1 1];  % item is 1 field x 3 fields
-DefAns.TSDir = pwd;
-
-
-Prompt(end+1,:) = {'Sample Rate (TR)', 'TRsec',[]};
-Formats(2,5).labelloc = 'topcenter';
-Formats(2,5).type = 'edit';
-Formats(2,5).format = 'float';
-Formats(2,5).size = 80;
-Formats(2,5).limits = [0 inf] ;% non-negative decimal number
-DefAns.TRsec = 2.6;
-
-
-Prompt(end+1,:) = {'Enable bandpass filter' 'EnableFilterMode',[]};
-Formats(2,6).labelloc = 'topcenter';
-Formats(2,6).type = 'check';
-DefAns.EnableFilterMode = true;
 
 % 
 % Prompt(end+1,:) = {['Cargar la SC'],[],[]};
@@ -118,50 +78,53 @@ DefAns.EnableFilterMode = true;
 % Formats(3,1).size = [-1 0];
 % Formats(3,1).span = [1 1]; % item is 1 field x 4 fields
 
-% Prompt(end+1,:) = {'Load Structural Connectivity (mat file)','',''};
-% Formats(3,2).type = 'button';
-% Formats(3,2).size = [150 40]; % Tamaño
-% %Formats(5,1).callback = @(~,~,handles,k)msgbox(sprintf('You just pressed %s button',get(handles(k),'String')),'modal');
-% Formats(3,2).callback = @(~,~,h,k)dataload(h,k);
-% 
-% 
-% 
-% Prompt(end+1,:) = {'Choose SC','SCCh',[]};
-% Formats(3,3).labelloc = 'leftmiddle';
-% Formats(3,3).type = 'list';
-% Formats(3,3).style = 'list';
-% Formats(3,3).format = 'text'; % Answer will give value shown in items, disable to get integer
-% Formats(3,3).items = {'Structural Connectivity is not included'};
-% Formats(3,3).limits = [1 1]; % multi-select
-% Formats(3,3).size =  size_control;
-% DefAns.SCCh = {'Structural Connectivity is not included'};
-% 
-% 
-% Prompt(end+1,:) = {'SC Folder','SCDir',[]};
-% Formats(3,4).labelloc = 'topcenter';
-% Formats(3,4).type = 'edit';
-% Formats(3,4).format = 'text';
-% Formats(3,4).size = [-1 0];
-% Formats(3,4).span = [1 1];  % item is 1 field x 3 fields
-% DefAns.SCDir = pwd;
+Prompt(end+1,:) = {'Load Structural Connectivity (mat file)','',''};
+Formats(3,2).type = 'button';
+Formats(3,2).size = [150 40]; % Tamaño
+%Formats(5,1).callback = @(~,~,handles,k)msgbox(sprintf('You just pressed %s button',get(handles(k),'String')),'modal');
+Formats(3,2).callback = @(~,~,h,k)dataload(h,k);
 
 
-Prompt(end+1,:) = {'Lower Freq. bandpass', 'BPlb',[]};
+
+Prompt(end+1,:) = {'Choose SC','SCCh',[]};
+Formats(3,3).labelloc = 'leftmiddle';
+Formats(3,3).type = 'list';
+Formats(3,3).style = 'list';
+Formats(3,3).format = 'text'; % Answer will give value shown in items, disable to get integer
+Formats(3,3).items = {'Structural Connectivity is not included'};
+Formats(3,3).limits = [1 1]; % multi-select
+Formats(3,3).size =  size_control;
+DefAns.SCCh = {'Structural Connectivity is not included'};
+
+
+Prompt(end+1,:) = {'SC Folder','SCDir',[]};
+Formats(3,4).labelloc = 'topcenter';
+Formats(3,4).type = 'edit';
+Formats(3,4).format = 'text';
+Formats(3,4).size = [-1 0];
+Formats(3,4).span = [1 1];  % item is 1 field x 3 fields
+DefAns.SCDir = pwd;
+
+
+
+% 
+% % 
+% 
+Prompt(end+1,:) = {'Which connection?','connectivity',[]};
 Formats(3,5).labelloc = 'topcenter';
-Formats(3,5).type = 'edit';
-Formats(3,5).format = 'float';
-Formats(3,5).size = 80;
-Formats(3,5).limits = [0 inf] ;% non-negative decimal number
-DefAns.BPlb = 0.04;
+Formats(3,5).type = 'list';
+Formats(3,5).style = 'list';
+Formats(3,5).format = 'text'; % Answer will give value shown in items, disable to get integer
+Formats(3,5).items = {'EDR','EDR+LR','SC'};
+Formats(3,5).limits = [1 1]; % multi-select
+Formats(3,5).size =  size_control;
+DefAns.connectivity = {'EDR+LR'};
+% 
 
-
-Prompt(end+1,:) = {'Upper Freq. bandpass', 'BPub',[]};
+Prompt(end+1,:) = {'Enable bandpass filter' 'EnableFilterMode',[]};
 Formats(3,6).labelloc = 'topcenter';
-Formats(3,6).type = 'edit';
-Formats(3,6).format = 'float';
-Formats(3,6).size = 80;
-Formats(3,6).limits = [0 inf] ;% non-negative decimal number
-DefAns.BPub = 0.07;
+Formats(3,6).type = 'check';
+DefAns.EnableFilterMode = true;
 
 
 
@@ -190,14 +153,24 @@ Formats(4,4).size = [-1 0];
 Formats(4,4).span = [1 1];  % item is 1 field x 3 fields
 DefAns.RSNDir = pwd;
 
-Prompt(end+1,:) = {'Cut ts at...', 'Tmax','(0: max)'};
+
+
+Prompt(end+1,:) = {'Lower Freq. bandpass', 'BPlb',[]};
 Formats(4,5).labelloc = 'topcenter';
 Formats(4,5).type = 'edit';
-Formats(4,5).format = 'integer';
-Formats(4,5).limits = [0 999999999]; % 9-digits (positive #)
+Formats(4,5).format = 'float';
 Formats(4,5).size = 80;
-Formats(4,5).unitsloc = 'bottomleft';
-DefAns.Tmax = 200;
+Formats(4,5).limits = [0 inf] ;% non-negative decimal number
+DefAns.BPlb = 0.04;
+
+
+Prompt(end+1,:) = {'Upper Freq. bandpass', 'BPub',[]};
+Formats(4,6).labelloc = 'topcenter';
+Formats(4,6).type = 'edit';
+Formats(4,6).format = 'float';
+Formats(4,6).size = 80;
+Formats(4,6).limits = [0 inf] ;% non-negative decimal number
+DefAns.BPub = 0.07;
 
 
 
@@ -228,15 +201,23 @@ Formats(5,4).span = [1 1];  % item is 1 field x 3 fields
 DefAns.CoGDir = pwd;
 
 
-Prompt(end+1,:) = {'Empirical Plots' 'PlotEmpYes',[]};
-Formats(6,1).labelloc = 'topcenter';
-Formats(6,1).type = 'check';
-DefAns.PlotEmpYes = true;
+Prompt(end+1,:) = {'Model ts up to...', 'Tsim','(0: max)'};
+Formats(5,5).labelloc = 'topcenter';
+Formats(5,5).type = 'edit';
+Formats(5,5).format = 'integer';
+Formats(5,5).limits = [0 999999999]; % 9-digits (positive #)
+Formats(5,5).size = 80;
+Formats(5,5).unitsloc = 'bottomleft';
+DefAns.Tsim = 200;
 
-Prompt(end+1,:) = {'Empirical Slope Plots' 'SlopePlot',[]};
-Formats(6,2).labelloc = 'topcenter';
-Formats(6,2).type = 'check';
-DefAns.PlotEmpYes = true;
+
+Prompt(end+1,:) = {'Sample Rate (TR)', 'TRsec',[]};
+Formats(5,6).labelloc = 'topcenter';
+Formats(5,6).type = 'edit';
+Formats(5,6).format = 'float';
+Formats(5,6).size = 80;
+Formats(5,6).limits = [0 inf] ;% non-negative decimal number
+DefAns.TRsec = 2.6;
 
 
 Prompt(end+1,:) = {'How many brain states','nBS',[]};
@@ -244,11 +225,10 @@ Formats(6,3).labelloc = 'topcenter';
 Formats(6,3).type = 'list';
 Formats(6,3).style = 'list';
 Formats(6,3).format = 'text'; % Answer will give value shown in items, disable to get integer
-Formats(6,3).items = {'1','2','3','4','5','6'};
+Formats(6,3).items = {'1','2','3','4'};
 Formats(6,3).limits = [1 1]; % multi-select
 Formats(6,3).size =  size_control;
 DefAns.nBS = {'2'};
-%Formats(7,2).callback = @(~,~,h,k)disableG(h,k);
 
 Prompt(end+1,:) = {'Initial Lambda', 'iLambda',[]};
 Formats(6,4).labelloc = 'topcenter';
@@ -276,25 +256,85 @@ Formats(6,6).size = 80;
 Formats(6,6).limits = [0 inf] ;% non-negative decimal number
 DefAns.stepsLam = 0.03;
 
-Prompt(end+1,:) = {'Statistical Test','stattest',[]};
+
+Prompt(end+1,:) = {'G range lower limit', 'GLb',[]};
+Formats(7,2).labelloc = 'topcenter';
+Formats(7,2).type = 'edit';
+Formats(7,2).format = 'float';
+Formats(7,2).size = 80;
+Formats(7,2).limits = [-inf inf]; % non-negative decimal number
+DefAns.GLb = 0;
+% 
+
+Prompt(end+1,:) = {'G range upper limit', 'GUb',[]};
 Formats(7,3).labelloc = 'topcenter';
-Formats(7,3).type = 'list';
-Formats(7,3).style = 'list';
-Formats(7,3).format = 'text'; % Answer will give value shown in items, disable to get integer
-Formats(7,3).items = {'ttest','ttest2','signrank','ranksum','permutation'};
-Formats(7,3).limits = [1 1]; % multi-select
-Formats(7,3).size =  size_control;
-DefAns.stattest = {'ranksum'};
+Formats(7,3).type = 'edit';
+Formats(7,3).format = 'float';
+Formats(7,3).size = 80;
+Formats(7,3).limits = [-inf inf] ;% non-negative decimal number
+DefAns.GUb = 3;
 
 
-Prompt(end+1,:) = {'Lambda to be plotted', 'PlotLambda',[]};
+Prompt(end+1,:) = {'G range step', 'Gstep',[]};
 Formats(7,4).labelloc = 'topcenter';
 Formats(7,4).type = 'edit';
 Formats(7,4).format = 'float';
 Formats(7,4).size = 80;
-Formats(7,4).limits = [0 inf] ;% non-negative decimal number
-DefAns.PlotLambda = 0.18;
+Formats(7,4).limits = [-inf inf] ;% non-negative decimal number
+DefAns.Gstep = 0.25;
 
+Prompt(end+1,:) = {'NSUBSIM (if =0,= NSUB)', 'NSIM',[]};
+Formats(7,5).labelloc = 'topcenter';
+Formats(7,5).type = 'edit';
+Formats(7,5).format = 'integer';
+Formats(7,5).limits = [0 999999999]; % 9-digits (positive #)
+Formats(7,5).size = 80;
+Formats(7,5).unitsloc = 'bottomleft';
+DefAns.NSIM = 5;
+% 
+
+Prompt(end+1,:) = {'Model Plots?' 'PlotYes',[]};
+Formats(7,6).labelloc = 'topcenter';
+Formats(7,6).type = 'check';
+DefAns.PlotYes = true;
+
+% perturbations
+
+Prompt(end+1,:) = {'Do you want model perturbation?' 'PertuYes',[]};
+Formats(8,2).labelloc = 'topcenter';
+Formats(8,2).type = 'check';
+DefAns.PertuYes = true;
+Formats(8,2).callback = @(~,~,h,k)disablePerts(h,k);
+
+
+Prompt(end+1,:) = {'Statistical Test','stattest',[]};
+Formats(8,3).labelloc = 'topcenter';
+Formats(8,3).type = 'list';
+Formats(8,3).style = 'list';
+Formats(8,3).format = 'text'; % Answer will give value shown in items, disable to get integer
+Formats(8,3).items = {'ttest','ttest2','signrank','ranksum','permutation'};
+Formats(8,3).limits = [1 1]; % multi-select
+Formats(8,3).size =  size_control;
+DefAns.stattest = {'ranksum'};
+
+
+
+Prompt(end+1,:) = {'Lambda perturbed', 'lamICS',[]};
+Formats(8,5).labelloc = 'topcenter';
+Formats(8,5).type = 'edit';
+Formats(8,5).format = 'float';
+Formats(8,5).size = 80;
+Formats(8,5).limits = [-inf inf] ;% non-negative decimal number
+DefAns.lamICS=0.18;
+
+
+Prompt(end+1,:) = {'Trials', 'nTrials',[]};
+Formats(8,6).labelloc = 'topcenter';
+Formats(8,6).type = 'edit';
+Formats(8,6).format = 'float';
+Formats(8,6).size = 80;
+Formats(8,6).limits = [-inf inf] ;% non-negative decimal number
+DefAns.nTrials=10;
 
 [Answer,Cancelled] = inputsdlg(Prompt,Title,Formats,DefAns,Options);
 
